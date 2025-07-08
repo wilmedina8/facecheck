@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "758472305944",
+    "project_id": "facecheck-25257",
+    "storage_bucket": "facecheck-25257.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758472305944:android:e4d279e73bba1145af026d",
+        "android_client_info": {
+          "package_name": "com.arwan.facecheck"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDY0hQNj45I_rcpQg909fQVRcwqX7hVY_Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758472305944:android:4a544af699366c87af026d",
+        "android_client_info": {
+          "package_name": "com.arwan.qolqa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDY0hQNj45I_rcpQg909fQVRcwqX7hVY_Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
