@@ -12,6 +12,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'estado_model.dart';
 export 'estado_model.dart';
 
@@ -30,7 +31,6 @@ class _EstadoWidgetState extends State<EstadoWidget>
   late EstadoModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  LatLng? currentUserLocationValue;
 
   final animationsMap = <String, AnimationInfo>{};
 
@@ -39,8 +39,6 @@ class _EstadoWidgetState extends State<EstadoWidget>
     super.initState();
     _model = createModel(context, () => EstadoModel());
 
-    getCurrentUserLocation(defaultLocation: LatLng(0.0, 0.0), cached: true)
-        .then((loc) => safeSetState(() => currentUserLocationValue = loc));
     animationsMap.addAll({
       'containerOnPageLoadAnimation': AnimationInfo(
         trigger: AnimationTrigger.onPageLoad,
@@ -83,22 +81,7 @@ class _EstadoWidgetState extends State<EstadoWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (currentUserLocationValue == null) {
-      return Container(
-        color: FlutterFlowTheme.of(context).primaryBackground,
-        child: Center(
-          child: SizedBox(
-            width: 50.0,
-            height: 50.0,
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                FlutterFlowTheme.of(context).primary,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
+    context.watch<FFAppState>();
 
     return GestureDetector(
       onTap: () {
@@ -171,26 +154,56 @@ class _EstadoWidgetState extends State<EstadoWidget>
                     ),
                     Expanded(
                       flex: 1,
-                      child: FlutterFlowGoogleMap(
-                        controller: _model.googleMapsController,
-                        onCameraIdle: (latLng) =>
-                            _model.googleMapsCenter = latLng,
-                        initialLocation: _model.googleMapsCenter ??=
-                            currentUserLocationValue!,
-                        markerColor: GoogleMarkerColor.violet,
-                        mapType: MapType.normal,
-                        style: GoogleMapStyle.standard,
-                        initialZoom: 14.0,
-                        allowInteraction: true,
-                        allowZoom: true,
-                        showZoomControls: true,
-                        showLocation: true,
-                        showCompass: false,
-                        showMapToolbar: false,
-                        showTraffic: false,
-                        centerMapOnMarkerTap: true,
-                        mapTakesGesturePreference: false,
-                      ),
+                      child: Builder(builder: (context) {
+                        final _googleMapMarker = FFAppState().location;
+                        return FlutterFlowGoogleMap(
+                          controller: _model.googleMapsController,
+                          onCameraIdle: (latLng) =>
+                              _model.googleMapsCenter = latLng,
+                          initialLocation: _model.googleMapsCenter ??=
+                              FFAppState().location!,
+                          markers: [
+                            if (_googleMapMarker != null)
+                              FlutterFlowMarker(
+                                _googleMapMarker.serialize(),
+                                _googleMapMarker,
+                              ),
+                          ],
+                          markerColor: GoogleMarkerColor.violet,
+                          mapType: MapType.normal,
+                          style: GoogleMapStyle.standard,
+                          initialZoom: 17.0,
+                          allowInteraction: true,
+                          allowZoom: true,
+                          showZoomControls: true,
+                          showLocation: true,
+                          showCompass: false,
+                          showMapToolbar: false,
+                          showTraffic: false,
+                          centerMapOnMarkerTap: true,
+                          mapTakesGesturePreference: false,
+                        );
+                      }),
+                    ),
+                    Text(
+                      FFAppState().ubicacion,
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            font: GoogleFonts.inter(
+                              fontWeight: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontWeight,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                            letterSpacing: 0.0,
+                            fontWeight: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .fontWeight,
+                            fontStyle: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .fontStyle,
+                          ),
                     ),
                     wrapWithModel(
                       model: _model.horaModel,
@@ -255,7 +268,12 @@ class _EstadoWidgetState extends State<EstadoWidget>
                               FlutterFlowRadioButton(
                                 options: ['Ingreso', 'Refrigerio', 'Salida']
                                     .toList(),
-                                onChanged: (val) => safeSetState(() {}),
+                                onChanged: (val) async {
+                                  safeSetState(() {});
+                                  FFAppState().estado =
+                                      _model.drpdwnEstadoValue!;
+                                  safeSetState(() {});
+                                },
                                 controller:
                                     _model.drpdwnEstadoValueController ??=
                                         FormFieldController<String>(null),
@@ -311,8 +329,11 @@ class _EstadoWidgetState extends State<EstadoWidget>
                                   ? true
                                   : false)
                                 FlutterFlowRadioButton(
-                                  options: ['Incio', 'Fin'].toList(),
-                                  onChanged: (val) => safeSetState(() {}),
+                                  options: ['Inicio', 'Fin'].toList(),
+                                  onChanged: (val) async {
+                                    safeSetState(() {});
+                                    safeSetState(() {});
+                                  },
                                   controller:
                                       _model.drpdwnRefValueController ??=
                                           FormFieldController<String>(null),

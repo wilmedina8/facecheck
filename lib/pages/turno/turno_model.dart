@@ -1,3 +1,4 @@
+import '/backend/api_requests/api_calls.dart';
 import '/components/hora_widget.dart';
 import '/flutter_flow/flutter_flow_google_map.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -9,6 +10,10 @@ import 'package:flutter/material.dart';
 class TurnoModel extends FlutterFlowModel<TurnoWidget> {
   ///  State fields for stateful widgets in this page.
 
+  // Stores action output result for [Backend Call - API (getEmpleado)] action in Turno widget.
+  ApiCallResponse? apiGetEmpleado;
+  // Stores action output result for [Backend Call - API (geoReverseCode)] action in Turno widget.
+  ApiCallResponse? apiGeoReverse;
   // State field(s) for GoogleMap widget.
   LatLng? googleMapsCenter;
   final googleMapsController = Completer<GoogleMapController>();

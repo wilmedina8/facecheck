@@ -2,6 +2,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'hora_model.dart';
 export 'hora_model.dart';
 
@@ -38,6 +39,8 @@ class _HoraWidgetState extends State<HoraWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return Align(
       alignment: AlignmentDirectional(0.0, 0.0),
       child: Row(
@@ -57,7 +60,7 @@ class _HoraWidgetState extends State<HoraWidget> {
             child: Align(
               alignment: AlignmentDirectional(0.0, 0.0),
               child: Text(
-                dateTimeFormat("d/M H:mm", getCurrentTimestamp),
+                dateTimeFormat("d/M h:mm a", FFAppState().hora),
                 style: FlutterFlowTheme.of(context).titleLarge.override(
                       font: GoogleFonts.interTight(
                         fontWeight:

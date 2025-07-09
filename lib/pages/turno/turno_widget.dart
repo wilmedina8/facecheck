@@ -1,3 +1,5 @@
+import '/auth/firebase_auth/auth_util.dart';
+import '/backend/api_requests/api_calls.dart';
 import '/components/hora_widget.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_google_map.dart';
@@ -6,10 +8,13 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'turno_model.dart';
 export 'turno_model.dart';
 
@@ -28,7 +33,6 @@ class _TurnoWidgetState extends State<TurnoWidget>
   late TurnoModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  LatLng? currentUserLocationValue;
 
   final animationsMap = <String, AnimationInfo>{};
 
@@ -37,8 +41,62 @@ class _TurnoWidgetState extends State<TurnoWidget>
     super.initState();
     _model = createModel(context, () => TurnoModel());
 
-    getCurrentUserLocation(defaultLocation: LatLng(0.0, 0.0), cached: true)
-        .then((loc) => safeSetState(() => currentUserLocationValue = loc));
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      // ActualizarUbicacion
+      FFAppState().hora = getCurrentTimestamp;
+      safeSetState(() {});
+      _model.apiGetEmpleado = await GetEmpleadoCall.call(
+        uid: currentUserUid,
+      );
+
+      if ((_model.apiGetEmpleado?.succeeded ?? true)) {
+        FFAppState().nombres = getJsonField(
+          (_model.apiGetEmpleado?.jsonBody ?? ''),
+          r'''$.nombres''',
+        ).toString().toString();
+        FFAppState().dni = getJsonField(
+          (_model.apiGetEmpleado?.jsonBody ?? ''),
+          r'''$.dni''',
+        ).toString().toString();
+        FFAppState().empresa = getJsonField(
+          (_model.apiGetEmpleado?.jsonBody ?? ''),
+          r'''$.empresa''',
+        ).toString().toString();
+        safeSetState(() {});
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error al Consultar Cuenta',
+              style: TextStyle(
+                color: FlutterFlowTheme.of(context).primaryText,
+              ),
+            ),
+            duration: Duration(milliseconds: 4000),
+            backgroundColor: FlutterFlowTheme.of(context).secondary,
+          ),
+        );
+      }
+
+      FFAppState().latitudStr =
+          functions.latLngString(FFAppState().location!, true);
+      FFAppState().longitudStr =
+          functions.latLngString(FFAppState().location!, false);
+      safeSetState(() {});
+      _model.apiGeoReverse = await GeoReverseCodeCall.call(
+        latlng: '${FFAppState().latitudStr},${FFAppState().longitudStr}',
+      );
+
+      if ((_model.apiGeoReverse?.succeeded ?? true)) {
+        FFAppState().ubicacion = getJsonField(
+          (_model.apiGeoReverse?.jsonBody ?? ''),
+          r'''$.results[0].formatted_address''',
+        ).toString().toString();
+        safeSetState(() {});
+      }
+    });
+
     animationsMap.addAll({
       'containerOnPageLoadAnimation': AnimationInfo(
         trigger: AnimationTrigger.onPageLoad,
@@ -81,22 +139,7 @@ class _TurnoWidgetState extends State<TurnoWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (currentUserLocationValue == null) {
-      return Container(
-        color: FlutterFlowTheme.of(context).primaryBackground,
-        child: Center(
-          child: SizedBox(
-            width: 50.0,
-            height: 50.0,
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                FlutterFlowTheme.of(context).primary,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
+    context.watch<FFAppState>();
 
     return GestureDetector(
       onTap: () {
@@ -146,26 +189,56 @@ class _TurnoWidgetState extends State<TurnoWidget>
                     ),
                     Expanded(
                       flex: 1,
-                      child: FlutterFlowGoogleMap(
-                        controller: _model.googleMapsController,
-                        onCameraIdle: (latLng) =>
-                            _model.googleMapsCenter = latLng,
-                        initialLocation: _model.googleMapsCenter ??=
-                            currentUserLocationValue!,
-                        markerColor: GoogleMarkerColor.violet,
-                        mapType: MapType.normal,
-                        style: GoogleMapStyle.standard,
-                        initialZoom: 14.0,
-                        allowInteraction: true,
-                        allowZoom: true,
-                        showZoomControls: true,
-                        showLocation: true,
-                        showCompass: false,
-                        showMapToolbar: false,
-                        showTraffic: false,
-                        centerMapOnMarkerTap: true,
-                        mapTakesGesturePreference: false,
-                      ),
+                      child: Builder(builder: (context) {
+                        final _googleMapMarker = FFAppState().location;
+                        return FlutterFlowGoogleMap(
+                          controller: _model.googleMapsController,
+                          onCameraIdle: (latLng) =>
+                              _model.googleMapsCenter = latLng,
+                          initialLocation: _model.googleMapsCenter ??=
+                              FFAppState().location!,
+                          markers: [
+                            if (_googleMapMarker != null)
+                              FlutterFlowMarker(
+                                _googleMapMarker.serialize(),
+                                _googleMapMarker,
+                              ),
+                          ],
+                          markerColor: GoogleMarkerColor.violet,
+                          mapType: MapType.normal,
+                          style: GoogleMapStyle.standard,
+                          initialZoom: 18.0,
+                          allowInteraction: true,
+                          allowZoom: true,
+                          showZoomControls: true,
+                          showLocation: true,
+                          showCompass: false,
+                          showMapToolbar: false,
+                          showTraffic: false,
+                          centerMapOnMarkerTap: true,
+                          mapTakesGesturePreference: false,
+                        );
+                      }),
+                    ),
+                    Text(
+                      FFAppState().ubicacion,
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            font: GoogleFonts.inter(
+                              fontWeight: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontWeight,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                            letterSpacing: 0.0,
+                            fontWeight: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .fontWeight,
+                            fontStyle: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .fontStyle,
+                          ),
                     ),
                     wrapWithModel(
                       model: _model.horaModel,
@@ -283,6 +356,9 @@ class _TurnoWidgetState extends State<TurnoWidget>
                               ),
                               FFButtonWidget(
                                 onPressed: () async {
+                                  FFAppState().turno = _model.drpdwnTurnoValue!;
+                                  safeSetState(() {});
+
                                   context.pushNamed(EstadoWidget.routeName);
                                 },
                                 text: 'Siguiente',

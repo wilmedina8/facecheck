@@ -80,6 +80,80 @@ class ValidarRostroCall {
   }
 }
 
+class GeoReverseCodeCall {
+  static Future<ApiCallResponse> call({
+    String? latlng = '-12.10506953615972, -76.9380018178354',
+  }) async {
+    return ApiManager.instance.makeApiCall(
+      callName: 'geoReverseCode',
+      apiUrl:
+          'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyAPXoIuajcCAhsfGekpKzMsc5-YMNZb9Do',
+      callType: ApiCallType.GET,
+      headers: {},
+      params: {
+        'latlng': latlng,
+      },
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+
+  static List<String>? address(dynamic response) => (getJsonField(
+        response,
+        r'''$.results[:].formatted_address''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+}
+
+class RegistrarAsistenciaCall {
+  static Future<ApiCallResponse> call({
+    String? turno = '',
+    String? estado = '',
+    String? refrigerio = '',
+    String? hora = '',
+    String? dni = '',
+    String? ubicacionAsistencia = '',
+    String? latitud = '',
+    String? longitud = '',
+  }) async {
+    final ffApiRequestBody = '''
+{
+  "turno": "${escapeStringForJson(turno)}",
+  "estado": "${escapeStringForJson(estado)}",
+  "refrigerio": "${escapeStringForJson(refrigerio)}",
+  "hora": "${escapeStringForJson(hora)}",
+  "dni": "${escapeStringForJson(dni)}",
+  "ubicacion_asistencia": "${escapeStringForJson(ubicacionAsistencia)}",
+  "latitud": "${escapeStringForJson(latitud)}",
+  "longitud": "${escapeStringForJson(longitud)}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'registrarAsistencia',
+      apiUrl:
+          'https://playgroundqulla.azurewebsites.net/api/registroAsistencia?',
+      callType: ApiCallType.POST,
+      headers: {},
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
 class ApiPagingParams {
   int nextPageNumber = 0;
   int numItems = 0;

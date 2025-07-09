@@ -9,7 +9,9 @@ class ValidacionModel extends FlutterFlowModel<ValidacionWidget> {
 
   final formKey = GlobalKey<FormState>();
   // Stores action output result for [Backend Call - API (validarRostro)] action in Button widget.
-  ApiCallResponse? apiResultqy0;
+  ApiCallResponse? apiValidacion;
+  // Stores action output result for [Backend Call - API (registrarAsistencia)] action in Button widget.
+  ApiCallResponse? apiRegistrar;
 
   @override
   void initState(BuildContext context) {}

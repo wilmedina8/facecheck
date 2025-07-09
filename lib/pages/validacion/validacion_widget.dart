@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'validacion_model.dart';
 export 'validacion_model.dart';
 
@@ -48,6 +49,8 @@ class _ValidacionWidgetState extends State<ValidacionWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -201,19 +204,48 @@ class _ValidacionWidgetState extends State<ValidacionWidget> {
                           16.0, 12.0, 16.0, 12.0),
                       child: FFButtonWidget(
                         onPressed: () async {
-                          _model.apiResultqy0 = await ValidarRostroCall.call(
+                          _model.apiValidacion = await ValidarRostroCall.call(
                             uid: currentUserUid,
                             imageBase64: widget.base64,
                           );
 
-                          if ((_model.apiResultqy0?.succeeded ?? true)) {
+                          if ((_model.apiValidacion?.succeeded ?? true)) {
                             if (getJsonField(
-                              (_model.apiResultqy0?.jsonBody ?? ''),
+                              (_model.apiValidacion?.jsonBody ?? ''),
                               r'''$.match''',
                             )
                                 ? true
                                 : true) {
-                              context.pushNamed(SuccessWidget.routeName);
+                              _model.apiRegistrar =
+                                  await RegistrarAsistenciaCall.call(
+                                turno: FFAppState().turno,
+                                estado: FFAppState().estado,
+                                refrigerio: FFAppState().refrigerio,
+                                hora: FFAppState().hora?.toString(),
+                                dni: FFAppState().dni,
+                                ubicacionAsistencia: FFAppState().ubicacion,
+                                latitud: FFAppState().latitudStr,
+                                longitud: FFAppState().longitudStr,
+                              );
+
+                              if ((_model.apiRegistrar?.succeeded ?? true)
+                                  ? true
+                                  : true) {
+                                context.pushNamed(SuccessWidget.routeName);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'ERROR AL REGISTRAR SU ASISTENCIA',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    duration: Duration(milliseconds: 4000),
+                                    backgroundColor: Color(0xFFD23939),
+                                  ),
+                                );
+                              }
                             } else {
                               await showDialog(
                                 context: context,
