@@ -14,10 +14,10 @@ class EstadoModel extends FlutterFlowModel<EstadoWidget> {
   final googleMapsController = Completer<GoogleMapController>();
   // Model for hora component.
   late HoraModel horaModel;
-  // State field(s) for drpdwnEstado widget.
-  FormFieldController<String>? drpdwnEstadoValueController;
-  // State field(s) for drpdwnRef widget.
-  FormFieldController<String>? drpdwnRefValueController;
+  // State field(s) for radioEstado widget.
+  FormFieldController<String>? radioEstadoValueController;
+  // State field(s) for radioRef widget.
+  FormFieldController<String>? radioRefValueController;
   bool isDataUploading_photo2 = false;
   FFUploadedFile uploadedLocalFile_photo2 =
       FFUploadedFile(bytes: Uint8List.fromList([]));
@@ -36,6 +36,6 @@ class EstadoModel extends FlutterFlowModel<EstadoWidget> {
   }
 
   /// Additional helper methods.
-  String? get drpdwnEstadoValue => drpdwnEstadoValueController?.value;
-  String? get drpdwnRefValue => drpdwnRefValueController?.value;
+  String? get radioEstadoValue => radioEstadoValueController?.value;
+  String? get radioRefValue => radioRefValueController?.value;
 }

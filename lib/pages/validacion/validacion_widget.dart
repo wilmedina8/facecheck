@@ -210,12 +210,11 @@ class _ValidacionWidgetState extends State<ValidacionWidget> {
                           );
 
                           if ((_model.apiValidacion?.succeeded ?? true)) {
-                            if (getJsonField(
+                            if (ValidarRostroCall.match(
                               (_model.apiValidacion?.jsonBody ?? ''),
-                              r'''$.match''',
-                            )
+                            )!
                                 ? true
-                                : true) {
+                                : false) {
                               _model.apiRegistrar =
                                   await RegistrarAsistenciaCall.call(
                                 turno: FFAppState().turno,

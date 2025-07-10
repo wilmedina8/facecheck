@@ -7,6 +7,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'auth2_model.dart';
 export 'auth2_model.dart';
@@ -124,33 +125,50 @@ class _Auth2WidgetState extends State<Auth2Widget>
                 padding: EdgeInsetsDirectional.fromSTEB(32.0, 12.0, 32.0, 32.0),
                 child: Container(
                   width: double.infinity,
-                  height: 230.0,
+                  height: 187.9,
                   decoration: BoxDecoration(
                     color: Color(0xFFF1F4F8),
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   alignment: AlignmentDirectional(0.0, 0.0),
-                  child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 72.0),
-                    child: Text(
-                      'FaceCheck',
-                      style: FlutterFlowTheme.of(context).displaySmall.override(
-                            font: GoogleFonts.plusJakartaSans(
-                              fontWeight: FontWeight.w600,
-                              fontStyle: FlutterFlowTheme.of(context)
-                                  .displaySmall
-                                  .fontStyle,
-                            ),
-                            color: Color(0xFF101213),
-                            fontSize: 36.0,
-                            letterSpacing: 0.0,
-                            fontWeight: FontWeight.w600,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .displaySmall
-                                .fontStyle,
-                          ),
-                    ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: SvgPicture.asset(
+                          'assets/images/logo_iconFC.svg',
+                          width: 48.56,
+                          height: 49.4,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
+                        child: Text(
+                          'FaceCheck',
+                          style: FlutterFlowTheme.of(context)
+                              .displaySmall
+                              .override(
+                                font: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.w600,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .displaySmall
+                                      .fontStyle,
+                                ),
+                                color: Color(0xFF101213),
+                                fontSize: 36.0,
+                                letterSpacing: 0.0,
+                                fontWeight: FontWeight.w600,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .displaySmall
+                                    .fontStyle,
+                              ),
+                        ),
+                      ),
+                    ].divide(SizedBox(height: 5.0)),
                   ),
                 ),
               ),
@@ -320,7 +338,7 @@ class _Auth2WidgetState extends State<Auth2Widget>
                                                       .fromSTEB(
                                                           0.0, 4.0, 0.0, 24.0),
                                                   child: Text(
-                                                    'Ingerse sus credenciales para validar su asistencia',
+                                                    'Ingresa tus credenciales para validar tu asistencia',
                                                     textAlign: TextAlign.start,
                                                     style: FlutterFlowTheme.of(
                                                             context)

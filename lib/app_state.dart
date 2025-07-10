@@ -81,7 +81,7 @@ class FFAppState extends ChangeNotifier {
     _estado = value;
   }
 
-  String _refrigerio = '';
+  String _refrigerio = '-';
   String get refrigerio => _refrigerio;
   set refrigerio(String value) {
     _refrigerio = value;

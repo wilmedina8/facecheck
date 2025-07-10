@@ -78,6 +78,11 @@ class ValidarRostroCall {
       alwaysAllowBody: false,
     );
   }
+
+  static bool? match(dynamic response) => castToType<bool>(getJsonField(
+        response,
+        r'''$.match''',
+      ));
 }
 
 class GeoReverseCodeCall {

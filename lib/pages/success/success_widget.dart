@@ -7,6 +7,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'success_model.dart';
 export 'success_model.dart';
 
@@ -218,6 +219,8 @@ class _SuccessWidgetState extends State<SuccessWidget>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -307,7 +310,7 @@ class _SuccessWidgetState extends State<SuccessWidget>
                     padding:
                         EdgeInsetsDirectional.fromSTEB(0.0, 44.0, 0.0, 0.0),
                     child: Text(
-                      'Marcaciòn Exitosa',
+                      'Marcación Exitosa',
                       style:
                           FlutterFlowTheme.of(context).headlineSmall.override(
                                 font: GoogleFonts.interTight(
@@ -339,7 +342,29 @@ class _SuccessWidgetState extends State<SuccessWidget>
                 Align(
                   alignment: AlignmentDirectional(0.0, 0.0),
                   child: Text(
-                    'Se ha registrado correctamente su asistencia a las ${dateTimeFormat("Hm", getCurrentTimestamp)}',
+                    FFAppState().nombres,
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          font: GoogleFonts.inter(
+                            fontWeight: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .fontWeight,
+                            fontStyle: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .fontStyle,
+                          ),
+                          letterSpacing: 0.0,
+                          fontWeight: FlutterFlowTheme.of(context)
+                              .bodyMedium
+                              .fontWeight,
+                          fontStyle:
+                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                        ),
+                  ),
+                ),
+                Align(
+                  alignment: AlignmentDirectional(0.0, 0.0),
+                  child: Text(
+                    'Se ha registrado correctamente su asistencia a las ${dateTimeFormat("Hm", getCurrentTimestamp)} en ${FFAppState().ubicacion}',
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).labelMedium.override(
                           font: GoogleFonts.inter(
